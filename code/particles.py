@@ -1,5 +1,5 @@
 import pygame
-from support import import_folder
+from code.helpers.support import import_folder
 from random import choice
 
 

@@ -32,7 +32,7 @@ class Entity(pygame.sprite.Sprite):
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
                     if self.direction.y > 0:  # moving down
-                        self.hitbox.bottom = sprite.hitbox.top
+                        self.hitbox.bottom = sprite.hitbox.top  # todo заход за текстуру когда игрок идет сзади дерева
                     if self.direction.y < 0:  # moving up
                         self.hitbox.top = sprite.hitbox.bottom
 

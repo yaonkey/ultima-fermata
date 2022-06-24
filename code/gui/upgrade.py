@@ -1,5 +1,6 @@
 import pygame
-from settings import *
+from code.settings import *
+from code.helpers.inputKeys import key as ikey
 
 
 class Upgrade:
@@ -27,16 +28,16 @@ class Upgrade:
         keys = pygame.key.get_pressed()
 
         if self.can_move:
-            if keys[pygame.K_RIGHT] and self.selection_index < self.attribute_nr - 1:
+            if keys[ikey['right']] and self.selection_index < self.attribute_nr - 1:
                 self.selection_index += 1
                 self.can_move = False
                 self.selection_time = pygame.time.get_ticks()
-            elif keys[pygame.K_LEFT] and self.selection_index >= 1:
+            elif keys[ikey['left']] and self.selection_index >= 1:
                 self.selection_index -= 1
                 self.can_move = False
                 self.selection_time = pygame.time.get_ticks()
 
-            if keys[pygame.K_SPACE]:
+            if keys[ikey['attack']]:
                 self.can_move = False
                 self.selection_time = pygame.time.get_ticks()
                 self.item_list[self.selection_index].trigger(self.player)

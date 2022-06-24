@@ -1,7 +1,10 @@
 import pygame
-from settings import *
-from support import import_folder
-from entity import Entity
+
+from code.data import weapon_data, magic_data
+from code.settings import *
+from code.helpers.support import import_folder
+from code.entity import Entity
+from code.helpers.inputKeys import key as ikey
 
 
 class Player(Entity):
@@ -70,33 +73,33 @@ class Player(Entity):
             keys = pygame.key.get_pressed()
 
             # movement input
-            if keys[pygame.K_UP]:
+            if keys[ikey['up']]:
                 self.direction.y = -1
                 self.status = 'up'
-            elif keys[pygame.K_DOWN]:
+            elif keys[ikey['down']]:
                 self.direction.y = 1
                 self.status = 'down'
             else:
                 self.direction.y = 0
 
-            if keys[pygame.K_RIGHT]:
+            if keys[ikey['right']]:
                 self.direction.x = 1
                 self.status = 'right'
-            elif keys[pygame.K_LEFT]:
+            elif keys[ikey['left']]:
                 self.direction.x = -1
                 self.status = 'left'
             else:
                 self.direction.x = 0
 
             # attack input
-            if keys[pygame.K_SPACE]:
+            if keys[ikey['attack']]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 self.create_attack()
                 self.weapon_attack_sound.play()
 
             # magic input
-            if keys[pygame.K_LCTRL]:
+            if keys[ikey['magic_attack']]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 style = list(magic_data.keys())[self.magic_index]
@@ -104,7 +107,7 @@ class Player(Entity):
                 cost = list(magic_data.values())[self.magic_index]['cost']
                 self.create_magic(style, strength, cost)
 
-            if keys[pygame.K_q] and self.can_switch_weapon:
+            if keys[ikey['change_weapon']] and self.can_switch_weapon:
                 self.can_switch_weapon = False
                 self.weapon_switch_time = pygame.time.get_ticks()
 
@@ -115,7 +118,7 @@ class Player(Entity):
 
                 self.weapon = list(weapon_data.keys())[self.weapon_index]
 
-            if keys[pygame.K_e] and self.can_switch_magic:
+            if keys[ikey['change_magic']] and self.can_switch_magic:
                 self.can_switch_magic = False
                 self.magic_switch_time = pygame.time.get_ticks()
 

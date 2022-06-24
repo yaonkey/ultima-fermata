@@ -1,5 +1,7 @@
 import pygame
-from settings import *
+
+from code.data import weapon_data, magic_data
+from code.settings import *
 
 
 class UI:
@@ -12,6 +14,7 @@ class UI:
         # bar setup
         self.health_bar_rect = pygame.Rect(10, 10, HEALTH_BAR_WIDTH, BAR_HEIGHT)
         self.energy_bar_rect = pygame.Rect(10, 34, ENERGY_BAR_WIDTH, BAR_HEIGHT)
+        self.hide_bars = False
 
         # convert weapon dictionary
         self.weapon_graphics = []
@@ -26,8 +29,9 @@ class UI:
             magic = pygame.image.load(magic['graphic']).convert_alpha()
             self.magic_graphics.append(magic)
 
-    def show_bar(self, current, max_amount, bg_rect, color):
+    def show_bar(self, current, max_amount, bg_rect, color, text=''):
         # draw bg
+        font = pygame.font.Font(UI_FONT, UI_BAR_FONT_SIZE)
         pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
 
         # converting stat to pixel
@@ -37,8 +41,12 @@ class UI:
         current_rect.width = current_width
 
         # drawing the bar
-        pygame.draw.rect(self.display_surface, color, current_rect)
-        pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
+        stat_surf = font.render(text + str(int(current)), True, TEXT_COLOR)
+        stat_rect = pygame.draw.rect(self.display_surface, color, current_rect)
+        border_rect = pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
+
+        stat_re = stat_surf.get_rect(topleft=(20, stat_rect.centery - 8))
+        self.display_surface.blit(stat_surf, stat_re)
 
     def show_exp(self, exp):
         text_surf = self.font.render(str(int(exp)), False, TEXT_COLOR)
@@ -60,24 +68,35 @@ class UI:
         return bg_rect
 
     def weapon_overlay(self, weapon_index, has_switched):
-        bg_rect = self.selection_box(10, 630, has_switched)
+        bg_rect = self.selection_box(10, self.display_surface.get_size()[1] - 100, has_switched)
         weapon_surf = self.weapon_graphics[weapon_index]
         weapon_rect = weapon_surf.get_rect(center=bg_rect.center)
 
         self.display_surface.blit(weapon_surf, weapon_rect)
 
     def magic_overlay(self, magic_index, has_switched):
-        bg_rect = self.selection_box(80, 635, has_switched)
+        bg_rect = self.selection_box(100, self.display_surface.get_size()[1] - 100, has_switched)
         magic_surf = self.magic_graphics[magic_index]
         magic_rect = magic_surf.get_rect(center=bg_rect.center)
 
         self.display_surface.blit(magic_surf, magic_rect)
 
     def display(self, player):
-        self.show_bar(player.health, player.stats['health'], self.health_bar_rect, HEALTH_COLOR)
-        self.show_bar(player.energy, player.stats['energy'], self.energy_bar_rect, ENERGY_COLOR)
 
-        self.show_exp(player.exp)
+        health = player.stats['health']
+        health_text = " Health "
+        energy = player.stats['energy']
+        energy_text = " Energy "
+        if not self.hide_bars:
+            self.show_bar(player.health, health, pygame.Rect(10, 10, health * 2.5, BAR_HEIGHT),
+                          HEALTH_COLOR, health_text)
+            self.show_bar(player.energy, energy, pygame.Rect(10, 45, energy * 2.5, BAR_HEIGHT),
+                          ENERGY_COLOR, energy_text)
 
-        self.weapon_overlay(player.weapon_index, not player.can_switch_weapon)
-        self.magic_overlay(player.magic_index, not player.can_switch_magic)
+            self.show_exp(player.exp)
+
+            self.weapon_overlay(player.weapon_index, not player.can_switch_weapon)
+            self.magic_overlay(player.magic_index, not player.can_switch_magic)
+
+    def hide(self):
+        self.hide_bars = True

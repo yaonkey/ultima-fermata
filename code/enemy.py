@@ -1,6 +1,6 @@
-from entity import Entity
-from settings import *
-from support import *
+from code.data import monster_data
+from code.entity import Entity
+from code.helpers.support import *
 
 
 class Enemy(Entity):
