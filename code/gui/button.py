@@ -6,6 +6,10 @@ class Button:
     """Create a button, then blit the surface in the while loop"""
 
     def __init__(self, text, pos):
+        self.rect = None
+        self.surface = None
+        self.size = None
+        self.text = None
         self.x, self.y = pos
         self.font = pygame.font.SysFont(UI_FONT, TEXT_COLOR)
         self.change_text(text, UI_BG_COLOR)
@@ -20,11 +24,11 @@ class Button:
         self.rect = pygame.Rect(self.x, self.y, self.size[0], self.size[1])
 
     def show(self):
-        screen.blit(button1.surface, (self.x, self.y))
+        pass  # screen.blit(button1.surface, (self.x, self.y))
 
     def click(self, event):
         x, y = pygame.mouse.get_pos()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if pygame.mouse.get_pressed()[0]:
                 if self.rect.collidepoint(x, y):
-                    self.change_text(self.feedback  )
+                    self.change_text(self.feedback)

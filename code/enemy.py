@@ -8,6 +8,7 @@ class Enemy(Entity):
 
         # general setup
         super().__init__(groups)
+        self.animations = None
         self.sprite_type = 'enemy'
 
         # graphics setup
@@ -63,11 +64,7 @@ class Enemy(Entity):
         enemy_vec = pygame.math.Vector2(self.rect.center)
         player_vec = pygame.math.Vector2(player.rect.center)
         distance = (player_vec - enemy_vec).magnitude()
-
-        if distance > 0:
-            direction = (player_vec - enemy_vec).normalize()
-        else:
-            direction = pygame.math.Vector2()
+        direction = (player_vec - enemy_vec).normalize() if distance > 0 else pygame.math.Vector2()
 
         return (distance, direction)
 
