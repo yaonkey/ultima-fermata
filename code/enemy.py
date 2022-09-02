@@ -110,31 +110,31 @@ class Enemy(Entity):
 
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
-        if not self.can_attack:
-            if current_time - self.attack_time >= self.attack_cooldown:
-                self.can_attack = True
+        if not self.can_attack and current_time - self.attack_time >= self.attack_cooldown:
+            self.can_attack = True
 
-        if not self.vulnerable:
-            if current_time - self.hit_time >= self.invincibility_duration:
-                self.vulnerable = True
+        if not self.vulnerable and current_time - self.hit_time >= self.invincibility_duration:
+            self.vulnerable = True
 
     def get_damage(self, player, attack_type):
-        if self.vulnerable:
-            self.hit_sound.play()
-            self.direction = self.get_player_distance_direction(player)[1]
-            if attack_type == 'weapon':
-                self.health -= player.get_full_weapon_damage()
-            else:
-                self.health -= player.get_full_magic_damage()
-            self.hit_time = pygame.time.get_ticks()
-            self.vulnerable = False
+        if not self.vulnerable:
+            return
+        self.hit_sound.play()
+        self.direction = self.get_player_distance_direction(player)[1]
+        if attack_type == 'weapon':
+            self.health -= player.get_full_weapon_damage()
+        else:
+            self.health -= player.get_full_magic_damage()
+        self.hit_time = pygame.time.get_ticks()
+        self.vulnerable = False
 
     def check_death(self):
-        if self.health <= 0:
-            self.kill()
-            self.trigger_death_particles(self.rect.center, self.monster_name)
-            self.add_exp(self.exp)
-            self.death_sound.play()
+        if self.health > 0:
+            return
+        self.kill()
+        self.trigger_death_particles(self.rect.center, self.monster_name)
+        self.add_exp(self.exp)
+        self.death_sound.play()
 
     def hit_reaction(self):
         if not self.vulnerable:
