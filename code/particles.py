@@ -52,12 +52,7 @@ class AnimationPlayer:
         return new_frames
 
     def create_grass_particles(self, pos, groups):
-        animation_frames = choice(self.frames['leaf'])
-        ParticleEffect(pos, animation_frames, groups)
+        ParticleEffect(pos, choice(self.frames['leaf']), groups)
 
     def create_particles(self, animation_type, pos, groups):
-        animation_frames = self.frames[animation_type]
-        ParticleEffect(pos, animation_frames, groups)
-
-
-
+        ParticleEffect(pos, self.frames[animation_type], groups)
