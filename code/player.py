@@ -189,14 +189,10 @@ class Player(Entity):
             self.image.set_alpha(255)
 
     def get_full_weapon_damage(self):
-        base_damage = self.stats['attack']
-        weapon_damage = weapon_data[self.weapon]['damage']
-        return base_damage + weapon_damage
+        return self.stats['attack'] + weapon_data[self.weapon]['damage']
 
     def get_full_magic_damage(self):
-        base_damage = self.stats['magic']
-        spell_damage = magic_data[self.magic]['strength']
-        return base_damage + spell_damage
+        return self.stats['magic'] + magic_data[self.magic]['strength']
 
     def get_value_by_index(self, index):
         return list(self.stats.values())[index]
