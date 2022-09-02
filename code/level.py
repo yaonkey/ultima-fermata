@@ -56,7 +56,7 @@ class Level:
             'entities': import_csv_layout('../map/map_Entities.csv')
         }
         graphics = {
-            'grass': import_folder('../graphics/Grass'),
+            'grass': import_folder('../graphics/grass'),
             'objects': import_folder('../graphics/objects')
         }
 
@@ -66,46 +66,45 @@ class Level:
                     if col != '-1':
                         x = col_index * TILESIZE
                         y = row_index * TILESIZE
-                        if style == 'boundary':
-                            Tile((x, y), [self.obstacle_sprites], 'invisible')
-                        if style == 'grass':
-                            random_grass_image = choice(graphics['grass'])
-                            Tile(
-                                (x, y),
-                                [self.visible_sprites, self.obstacle_sprites, self.attackable_sprites],
-                                'grass',
-                                random_grass_image)
-
-                        if style == 'object':
-                            surf = graphics['objects'][int(col)]
-                            Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'object', surf)
-
-                        if style == 'entities':
-                            if col == '394':
-                                self.player = Player(
+                        match style:
+                            case 'boundary':
+                                Tile((x, y), [self.obstacle_sprites], 'invisible')
+                            case 'grass':
+                                random_grass_image = choice(graphics['grass'])
+                                Tile(
                                     (x, y),
-                                    [self.visible_sprites],
-                                    self.obstacle_sprites,
-                                    self.create_attack,
-                                    self.destroy_attack,
-                                    self.create_magic)
-                            else:
-                                if col == '390':
-                                    monster_name = 'bamboo'
-                                elif col == '391':
-                                    monster_name = 'spirit'
-                                elif col == '392':
-                                    monster_name = 'raccoon'
+                                    [self.visible_sprites, self.obstacle_sprites, self.attackable_sprites],
+                                    'grass',
+                                    random_grass_image)
+                            case 'object':
+                                surf = graphics['objects'][int(col)]
+                                Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'object', surf)
+                            case 'entities':
+                                if col == '394':
+                                    self.player = Player(
+                                        (x, y),
+                                        [self.visible_sprites],
+                                        self.obstacle_sprites,
+                                        self.create_attack,
+                                        self.destroy_attack,
+                                        self.create_magic)
                                 else:
-                                    monster_name = 'squid'
-                                Enemy(
-                                    monster_name,
-                                    (x, y),
-                                    [self.visible_sprites, self.attackable_sprites],
-                                    self.obstacle_sprites,
-                                    self.damage_player,
-                                    self.trigger_death_particles,
-                                    self.add_exp)
+                                    if col == '390':
+                                        monster_name = 'bamboo'
+                                    elif col == '391':
+                                        monster_name = 'spirit'
+                                    elif col == '392':
+                                        monster_name = 'raccoon'
+                                    else:
+                                        monster_name = 'squid'
+                                    Enemy(
+                                        monster_name,
+                                        (x, y),
+                                        [self.visible_sprites, self.attackable_sprites],
+                                        self.obstacle_sprites,
+                                        self.damage_player,
+                                        self.trigger_death_particles,
+                                        self.add_exp)
 
     def create_attack(self):
 
