@@ -1,6 +1,6 @@
-from code.data import monster_data
-from code.entity import Entity
-from code.helpers.support import *
+from data import monster_data
+from entity import Entity
+from helpers.support import *
 
 
 class Enemy(Entity):

@@ -1,19 +1,19 @@
 from random import choice, randint
 
-from code.gui.gameover import Gameover
-from code.gui.inventory import Inventory
-from code.helpers.YSortCameraGroup import YSortCameraGroup
-from code.enemy import Enemy
-from code.magic import MagicPlayer
-from code.gui.pause import Pause
-from code.particles import AnimationPlayer
-from code.player import Player
-from code.settings import *
-from code.helpers.support import *
-from code.tile import Tile
-from code.gui.ui import UI
-from code.gui.upgrade import Upgrade
-from code.weapon import Weapon
+from gui.gameover import Gameover
+from gui.inventory import Inventory
+from helpers.YSortCameraGroup import YSortCameraGroup
+from enemy import Enemy
+from magic import MagicPlayer
+from gui.pause import Pause
+from particles import AnimationPlayer
+from player import Player
+from settings import *
+from helpers.support import *
+from tile import Tile
+from gui.ui import UI
+from gui.upgrade import Upgrade
+from weapon import Weapon
 
 
 class Level:

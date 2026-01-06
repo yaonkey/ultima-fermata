@@ -1,6 +1,6 @@
 import pygame
 
-from code.settings import UI_FONT, UI_PAUSE_FONT_SIZE, TEXT_COLOR
+from settings import UI_FONT, UI_PAUSE_FONT_SIZE, TEXT_COLOR
 
 
 class Gameover:

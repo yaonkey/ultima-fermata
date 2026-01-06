@@ -1,10 +1,10 @@
 import pygame
 
-from code.data import weapon_data, magic_data
-from code.settings import *
-from code.helpers.support import import_folder
-from code.entity import Entity
-from code.helpers.inputKeys import key as ikey
+from data import weapon_data, magic_data
+from settings import *
+from helpers.support import import_folder
+from entity import Entity
+from helpers.inputKeys import key as ikey
 
 
 class Player(Entity):

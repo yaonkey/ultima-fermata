@@ -1,6 +1,6 @@
 import pygame
-from code.settings import *
-from code.helpers.inputKeys import key as ikey
+from settings import *
+from helpers.inputKeys import key as ikey
 
 
 class Upgrade:

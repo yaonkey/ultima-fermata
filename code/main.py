@@ -1,9 +1,9 @@
 import pygame
 import sys
 
-from code.level import Level
-from code.settings import *
-from code.helpers.inputKeys import key as ikey
+from level import Level
+from settings import *
+from helpers.inputKeys import key as ikey
 
 
 class Game:

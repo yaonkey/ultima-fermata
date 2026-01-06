@@ -1,7 +1,7 @@
 import pygame
 
-from code.helpers.particleEffect import ParticleEffect
-from code.helpers.support import import_folder
+from helpers.particleEffect import ParticleEffect
+from helpers.support import import_folder
 from random import choice
 
 
