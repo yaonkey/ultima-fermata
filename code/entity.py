@@ -7,6 +7,7 @@ class Entity(pygame.sprite.Sprite):
         super().__init__(groups)
         self.hitbox = None
         self.obstacle_sprites = None
+        self.rect = None
         self.frame_index = 0
         self.animation_speed = 0.15
         self.direction = pygame.math.Vector2()
