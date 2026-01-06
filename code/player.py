@@ -1,65 +1,68 @@
 import pygame
 
-from data import weapon_data, magic_data
+from data import weapon_data, magic_data, item_data
 from settings import *
 from helpers.support import import_folder
 from entity import Entity
 from helpers.inputKeys import key as ikey
 
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
 
 class Player(Entity):
-    def __init__(self, pos, groups, obstacle_sprites, create_attack, destroy_attack, create_magic):
+    def __init__(self, pos: Tuple[int, int], groups: List[pygame.sprite.Group], obstacle_sprites: pygame.sprite.Group, create_attack: Callable[[], None], destroy_attack: Callable[[], None], create_magic: Callable[[str, float, float], None]) -> None:
         super().__init__(groups)
-        self.animations = None
-        self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-6, HITBOX_OFFSET['player'])
+        self.animations: Optional[Dict[str, List[pygame.Surface]]] = None
+        self.image: pygame.Surface = pygame.image.load('../graphics/test/player.png').convert_alpha()
+        self.rect: pygame.Rect = self.image.get_rect(topleft=pos)
+        self.hitbox: pygame.Rect = self.rect.inflate(-6, HITBOX_OFFSET['player'])
 
         # graphics setup
         self.import_player_assets()
-        self.status = 'down'
+        self.status: str = 'down'
 
         # movement
-        self.attacking = False
-        self.attack_cooldown = 400
-        self.attack_time = None
-        self.obstacle_sprites = obstacle_sprites
+        self.attacking: bool = False
+        self.attack_cooldown: int = 400
+        self.attack_time: Optional[int] = None
+        self.obstacle_sprites: pygame.sprite.Group = obstacle_sprites
 
         # weapon
-        self.create_attack = create_attack
-        self.destroy_attack = destroy_attack
-        self.weapon_index = 0
-        self.weapon = list(weapon_data.keys())[self.weapon_index]
-        self.can_switch_weapon = True
-        self.weapon_switch_time = None
-        self.switch_duration_cooldown = 200
+        self.create_attack: Callable[[], None] = create_attack
+        self.destroy_attack: Callable[[], None] = destroy_attack
+        self.weapon_index: int = 0
+        self.weapon: str = list(weapon_data.keys())[self.weapon_index]
+        self.can_switch_weapon: bool = True
+        self.weapon_switch_time: Optional[int] = None
+        self.switch_duration_cooldown: int = 200
 
         # magic
-        self.create_magic = create_magic
-        self.magic_index = 0
-        self.magic = list(magic_data.keys())[self.magic_index]
-        self.can_switch_magic = True
-        self.magic_switch_time = None
+        self.create_magic: Callable[[str, float, float], None] = create_magic
+        self.magic_index: int = 0
+        self.magic: str = list(magic_data.keys())[self.magic_index]
+        self.can_switch_magic: bool = True
+        self.magic_switch_time: Optional[int] = None
 
         # stats
-        self.stats = {'health': 100, 'energy': 60, 'attack': 10, 'magic': 4, 'speed': 5}
-        self.max_stats = {'health': 300, 'energy': 140, 'attack': 20, 'magic': 10, 'speed': 10}
-        self.upgrade_cost = {'health': 100, 'energy': 100, 'attack': 100, 'magic': 100, 'speed': 100}
-        self.health = self.stats['health'] * 0.5
-        self.energy = self.stats['energy'] * 0.8
-        self.exp = 5000
-        self.speed = self.stats['speed']
+        self.stats: Dict[str, float] = {'health': 100, 'energy': 60, 'attack': 10, 'magic': 4, 'speed': 5}
+        self.max_stats: Dict[str, float] = {'health': 300, 'energy': 140, 'attack': 20, 'magic': 10, 'speed': 10}
+        self.upgrade_cost: Dict[str, float] = {'health': 100, 'energy': 100, 'attack': 100, 'magic': 100, 'speed': 100}
+        self.health: float = self.stats['health'] * 0.5
+        self.energy: float = self.stats['energy'] * 0.8
+        self.exp: int = 5000
+        self.speed: float = self.stats['speed']
 
         # damage timer
-        self.vulnerable = True
-        self.hurt_time = None
-        self.invulnerability_duration = 500
+        self.vulnerable: bool = True
+        self.hurt_time: Optional[int] = None
+        self.invulnerability_duration: int = 500
 
         # import a sound
-        self.weapon_attack_sound = pygame.mixer.Sound('../audio/sword.wav')
+        self.weapon_attack_sound: pygame.mixer.Sound = pygame.mixer.Sound('../audio/sword.wav')
         self.weapon_attack_sound.set_volume(0.4)
+        self.inventory: List[Dict[str, Any]] = []
 
-    def import_player_assets(self):
+    def import_player_assets(self) -> None:
         character_path = '../graphics/player/'
         self.animations = {'up': [], 'down': [], 'left': [], 'right': [],
                            'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
@@ -69,7 +72,7 @@ class Player(Entity):
             full_path = character_path + animation
             self.animations[animation] = import_folder(full_path)
 
-    def input(self):
+    def input(self) -> None:
         if not self.attacking:
             keys = pygame.key.get_pressed()
 
@@ -130,8 +133,7 @@ class Player(Entity):
 
                 self.magic = list(magic_data.keys())[self.magic_index]
 
-    def get_status(self):
-
+    def get_status(self) -> None:
         # idle status
         if self.direction.x == 0 and self.direction.y == 0:
             if not 'idle' in self.status and not 'attack' in self.status:
@@ -149,27 +151,30 @@ class Player(Entity):
             if 'attack' in self.status:
                 self.status = self.status.replace('_attack', '')
 
-    def cooldowns(self):
+    def cooldowns(self) -> None:
         current_time = pygame.time.get_ticks()
 
-        if self.attacking:
+        if self.attacking and self.attack_time:
             if current_time - self.attack_time >= self.attack_cooldown + weapon_data[self.weapon]['cooldown']:
                 self.attacking = False
                 self.destroy_attack()
 
-        if not self.can_switch_weapon:
+        if not self.can_switch_weapon and self.weapon_switch_time:
             if current_time - self.weapon_switch_time >= self.switch_duration_cooldown:
                 self.can_switch_weapon = True
 
-        if not self.can_switch_magic:
+        if not self.can_switch_magic and self.magic_switch_time:
             if current_time - self.magic_switch_time >= self.switch_duration_cooldown:
                 self.can_switch_magic = True
 
-        if not self.vulnerable:
+        if not self.vulnerable and self.hurt_time:
             if current_time - self.hurt_time >= self.invulnerability_duration:
                 self.vulnerable = True
 
-    def animate(self):
+    def animate(self) -> None:
+        if not self.animations:
+            return
+
         animation = self.animations[self.status]
 
         # loop over the frame index
@@ -188,28 +193,42 @@ class Player(Entity):
         else:
             self.image.set_alpha(255)
 
-    def get_full_weapon_damage(self):
+    def get_full_weapon_damage(self) -> float:
         return self.stats['attack'] + weapon_data[self.weapon]['damage']
 
-    def get_full_magic_damage(self):
+    def get_full_magic_damage(self) -> float:
         return self.stats['magic'] + magic_data[self.magic]['strength']
 
-    def get_value_by_index(self, index):
+    def get_value_by_index(self, index: int) -> float:
         return list(self.stats.values())[index]
 
-    def get_cost_by_index(self, index):
+    def get_cost_by_index(self, index: int) -> float:
         return list(self.upgrade_cost.values())[index]
 
-    def energy_recovery(self):
+    def energy_recovery(self) -> None:
         if self.energy < self.stats['energy']:
             self.energy += 0.01 * self.stats['magic']
         else:
             self.energy = self.stats['energy']
 
-    def update(self):
+    def update(self) -> None:
         self.input()
         self.cooldowns()
         self.get_status()
         self.animate()
         self.move(self.stats['speed'])
         self.energy_recovery()
+
+    def add_item(self, item_name: str) -> None:
+        if item_name in item_data:
+            self.inventory.append(item_data[item_name].copy())
+
+    def use_item(self, index: int) -> bool:
+        if 0 <= index < len(self.inventory):
+            item = self.inventory.pop(index)
+            if item['type'] == 'health':
+                self.health = min(self.stats['health'], self.health + item['amount'])
+            elif item['type'] == 'energy':
+                self.energy = min(self.stats['energy'], self.energy + item['amount'])
+            return True
+        return False

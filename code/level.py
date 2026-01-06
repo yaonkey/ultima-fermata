@@ -14,6 +14,7 @@ from tile import Tile
 from gui.ui import UI
 from gui.upgrade import Upgrade
 from weapon import Weapon
+from data import item_data
 
 
 class Level:
@@ -42,7 +43,7 @@ class Level:
         self.ui = UI()
         self.upgrade = Upgrade(self.player)
         self.pause = Pause()
-        self.inventory = Inventory()
+        self.inventory = Inventory(self.player)
 
         # particles
         self.animation_player = AnimationPlayer()
@@ -151,6 +152,10 @@ class Level:
     def trigger_death_particles(self, pos, particle_type):
 
         self.animation_player.create_particles(particle_type, pos, self.visible_sprites)
+
+        if randint(0, 1) == 0:
+            item_name = choice(list(item_data.keys()))
+            self.player.add_item(item_name)
 
     def add_exp(self, amount):
 
